@@ -65,21 +65,21 @@ df.groupby('matchType').mean().sort_values(by='winPlacePerc',ascending=False)
 
 # # Kill
 
-# In[9]:
+# In[34]:
 
 
-kill = df[['kills','teamKills','killStreaks','headshotKills','DBNOs','damageDealt','winPlacePerc']]
+kill = df[['kills','teamKills','roadKills','longestKill','weaponsAcquired','killStreaks','headshotKills','DBNOs','damageDealt','winPlacePerc']]
 # 킬 & 데미지"
 kill.describe()
 
 
-# In[10]:
+# In[35]:
 
 
-kill.head()
+kill
 
 
-# In[12]:
+# In[36]:
 
 
 plt.figure(figsize=(15,15))
@@ -87,7 +87,7 @@ sns.heatmap(kill.corr(), linewidths = 1.0, vmax = 1.0,
            square = True, linecolor = "white", annot = True, annot_kws = {"size" : 16})
 
 
-# In[13]:
+# In[12]:
 
 
 plt.figure(figsize=(10,10))
@@ -95,10 +95,12 @@ sns.set_palette('pastel')
 sns.histplot(x= kill['damageDealt'], y= kill['winPlacePerc'],data=kill)
 
 
-# In[ ]:
+# In[13]:
 
 
-
+plt.figure(figsize=(10,10))
+sns.set_palette('pastel')
+sns.histplot(x= kill['longestKill'], y= kill['winPlacePerc'],data=kill)
 
 
 # In[14]:
@@ -117,17 +119,46 @@ sns.boxplot(x="killStreaks", y="winPlacePerc", data=kill)
 plt.show()
 
 
+# In[40]:
+
+
+plt.figure(figsize=(30,15))
+sns.boxplot(x="weaponsAcquired", y="winPlacePerc", data=kill)
+plt.show()
+
+
+# In[53]:
+
+
+kill['weaponsAcquired'].mean()
+
+
+# In[49]:
+
+
+wea = kill['weaponsAcquired'].unique()
+wea
+#236
+
+
+# In[52]:
+
+
+wea1=kill['weaponsAcquired'].value_counts()
+wea1.head(30)
+
+
 # # Heal
 
-# In[16]:
+# In[54]:
 
 
-heal=df[['boosts','heals','revives','winPlacePerc','matchDuration']]
+heal=df[['boosts','heals','revives','matchDuration','winPlacePerc']]
 # 회복 아이템
 heal.mean()
 
 
-# In[18]:
+# In[55]:
 
 
 plt.figure(figsize=(10,10))
@@ -135,7 +166,7 @@ sns.heatmap(heal.corr(), linewidths = 1.0, vmax = 1.0,
            square = True,  linecolor = "white", annot = True, annot_kws = {"size" : 16})
 
 
-# In[19]:
+# In[18]:
 
 
 plt.figure(figsize=(15,8))
@@ -144,7 +175,19 @@ plt.show()
 # 부스트 아이템 사용 시 평균적으로 winplaceperc가 높아진다.
 
 
-# In[20]:
+# In[56]:
+
+
+heal['boosts'].value_counts()
+
+
+# In[57]:
+
+
+heal['boosts'].mean()
+
+
+# In[19]:
 
 
 plt.figure(figsize=(15,8))
@@ -153,7 +196,26 @@ plt.show()
 #heals 힐링 아이템 사용 시 평균적으로 winplaceperc가 높아진다.
 
 
-# In[21]:
+# In[64]:
+
+
+heal['heals'].mean()
+
+
+# In[65]:
+
+
+heal['heals'].value_counts()
+
+
+# In[66]:
+
+
+hea= heal['heals'].value_counts()
+hea.head(30)
+
+
+# In[20]:
 
 
 plt.figure(figsize=(15,8))
@@ -164,32 +226,46 @@ plt.show()
 
 # # Dist
 
-# In[22]:
+# In[21]:
 
 
 dist = df[['rideDistance','walkDistance','swimDistance','winPlacePerc']]
 
 
-# In[23]:
+# In[22]:
 
 
 dist
 
 
-# In[24]:
+# In[68]:
 
 
-df[(df['walkDistance'] == 0.0) & (df['winPlacePerc'] != 0.0)]
+plt.figure(figsize=(10,10))
+sns.heatmap(dist.corr(), linewidths = 1.0, vmax = 1.0,
+           square = True,  linecolor = "white", annot = True, annot_kws = {"size" : 16})
+
+
+# In[ ]:
+
+
+
+
+
+# In[71]:
+
+
+dist[(dist['walkDistance'] == 0.0) & (dist['winPlacePerc'] != 0.0)]
 # 움직이지않고도 winplaceperc가 높은 경우.
 
 
-# In[25]:
+# In[24]:
 
 
 df[(df['walkDistance'] == 0.0) & (df['rideDistance'] == 0.0) & (df['swimDistance'] == 0.0)]
 
 
-# In[26]:
+# In[25]:
 
 
 dist.describe()
@@ -197,15 +273,31 @@ dist.describe()
 # 06 4백만
 
 
+# In[26]:
+
+
+plt.figure(figsize=(10,10))
+sns.scatterplot(x='walkDistance',y='winPlacePerc',data=dist)
+
+
 # In[27]:
 
 
+plt.figure(figsize=(10,10))
+sns.scatterplot(x='swimDistance',y='winPlacePerc',data=dist)
 
-f, axes = plt.subplots(2,2,figsize=(20, 15), sharex = True)
-plt.xlim(0, 5000)
-sns.distplot(df['rideDistance'],color='skyblue',ax=axes[0,0])
-sns.distplot(df['walkDistance'],color='olive',ax=axes[0,1])
-sns.distplot(df['swimDistance'],color='red',ax=axes[1,0])
+
+# In[33]:
+
+
+dist['swimDistance'].value_counts()
+
+
+# In[29]:
+
+
+plt.figure(figsize=(10,10))
+sns.scatterplot(x='rideDistance',y='winPlacePerc',data=dist)
 
 
 # In[ ]:
