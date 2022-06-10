@@ -33,7 +33,7 @@
 # - **데이터 스케일링**  
 # 
 
-# In[2]:
+# In[49]:
 
 
 import numpy as np
@@ -49,10 +49,10 @@ import matplotlib.dates as mdates
 pd.set_option('display.max_columns',None)
 
 
-# In[3]:
+# In[58]:
 
 
-# df = pd.read_csv("/Users/krc/Downloads/pubg-finish-placement-prediction/train_V2.csv")
+#df = pd.read_csv("/Users/krc/Downloads/pubg-finish-placement-prediction/train_V2.csv")
 
 
 df = pd.read_csv("/Users/krc/Desktop/modeling_pjt/pjt_df1.csv",index_col=0)
@@ -62,7 +62,7 @@ df = pd.read_csv("/Users/krc/Desktop/modeling_pjt/pjt_df1.csv",index_col=0)
 #window
 
 
-# In[4]:
+# In[37]:
 
 
 # df[df['winPlacePerc'].isna()]
@@ -79,7 +79,7 @@ df = pd.read_csv("/Users/krc/Desktop/modeling_pjt/pjt_df1.csv",index_col=0)
 # df
 
 
-# In[6]:
+# In[51]:
 
 
 df
@@ -435,19 +435,27 @@ plt.show()
 
 # # Dist
 
-# In[47]:
+# In[54]:
 
 
-dist = df[['rideDistance','walkDistance','swimDistance','winPlacePerc']]
+df
 
 
-# In[48]:
+# In[69]:
 
 
-dist
+df_d = df[['matchType','assists','killPlace','kills', 'boosts' ,'damageDealt', 'heals',  'killStreaks', 'longestKill','rideDistance', 'swimDistance','walkDistance','winPlacePerc']]
 
 
-# In[49]:
+
+
+# In[70]:
+
+
+df_d
+
+
+# In[71]:
 
 
 plt.figure(figsize=(10,10))
@@ -459,30 +467,79 @@ sns.heatmap(dist.corr(), linewidths = 1.0, vmax = 1.0,
 
 # ## walkDistance == 0 경우 삭제?
 
-# In[50]:
+# In[72]:
 
 
-dist['walkDistance'].value_counts()
+df_d['walkDistance'].value_counts()
 
 
-# In[51]:
+# In[73]:
 
 
-dist[dist['walkDistance'] == 0.0]
+df_d[df_d['walkDistance'] == 0.0]
 # walkDistance 9만개 
 
 
-# In[52]:
+# In[74]:
 
 
-dist[(dist['walkDistance'] == 0.0) & (dist['winPlacePerc'] != 0.0)]
+df_d[(df_d['walkDistance'] == 0.0) & (df_d['winPlacePerc'] != 0.0)]
 # 움직이지않고도 winplaceperc가 높은 경우.
 
 
-# In[53]:
+# In[96]:
 
 
-dist[(dist['walkDistance'] == 0.0) & (dist['rideDistance'] == 0.0) & (dist['swimDistance'] == 0.0)]
+all_zero = df_d[(df_d['walkDistance'] == 0.0) & (df_d['rideDistance'] == 0.0) & (df_d['swimDistance'] == 0.0)&(df_d['winPlacePerc']== 0.0)]
+all_zero
+# 거리와 승률이 0인 경우
+# 그냥 아무것도 안 한 경우.
+all_zero.describe()
+
+
+# In[103]:
+
+
+all_zero[all_zero['kills']==27]
+#?? 진짜 핵 같은데...
+
+
+# In[104]:
+
+
+all_zero[all_zero['heals']==31]
+# ???
+
+
+# In[88]:
+
+
+plt.figure(figsize=(10,10))
+sns.histplot(data= all_zero,bins=30)
+
+
+# In[95]:
+
+
+df_d[(df_d['damageDealt'] == 0.0)&(df_d['walkDistance'] == 0.0) & (df_d['rideDistance'] == 0.0) & (df_d['swimDistance'] == 0.0)&(df_d['winPlacePerc'] != 0.0)]
+# 거리와 딜량이 0이지만, 승률이 0이 아닌 경우
+# 움직이지도 않고 딜도 넣지 않았는데 승률이 존재 한다.?
+# 그럼... 아무것도 안 했는데 다른 사람들이 먼저 죽었기 때문에, 잠수였는데 운이 좋게 오래 살아남아서 winPlacePerc가 올라 간 것으로 보임.
+
+
+# In[98]:
+
+
+lucky = df_d[(df_d['damageDealt'] == 0.0)&(df_d['walkDistance'] == 0.0) & (df_d['rideDistance'] == 0.0) & (df_d['swimDistance'] == 0.0)&(df_d['winPlacePerc'] != 0.0)]
+# 거리와 딜량이 0이지만, 승률이 0이 아닌 경우
+# 움직이지도 않고 딜도 넣지 않았는데 승률이 존재 한다.?
+# 그럼... 아무것도 안 했는데 다른 사람들이 먼저 죽었기 때문에, 잠수였는데 운이 좋게 오래 살아남아서 winPlacePerc가 올라 간 것으로 보임.
+
+
+# In[99]:
+
+
+lucky.describe()
 
 
 # In[54]:
@@ -628,13 +685,13 @@ sns.scatterplot(x='rankPoints',y='winPlacePerc',data=df)
 
 # ## kills
 
-# In[9]:
+# In[44]:
 
 
 df = df[['walkDistance', 'killPlace', 'boosts','matchType' ,'weaponsAcquired' ,'damageDealt', 'heals', 'kills', 'killStreaks', 'longestKill', 'rideDistance','winPlacePerc']]
 
 
-# In[10]:
+# In[45]:
 
 
 df
@@ -820,28 +877,96 @@ df_kills.describe()
 
 # ## walkDistance 
 
-# In[31]:
+# ## walkDistance == 0 경우 삭제?
+
+# In[72]:
 
 
-df['walkDistance'].value_counts()
+df_d['walkDistance'].value_counts()
 
 
-# In[39]:
+# In[73]:
 
 
-plt.figure(figsize=(18,10))
-sns.scatterplot(x='walkDistance',y='winPlacePerc',data=df)
+df_d[df_d['walkDistance'] == 0.0]
+# walkDistance 9만개 
 
 
-# In[32]:
+# In[74]:
 
 
-wal_d = df[(df['walkDistance'] == 0.0) & (df['winPlacePerc'] != 0.0)]
-wal_d.groupby('matchType').mean()
+df_d[(df_d['walkDistance'] == 0.0) & (df_d['winPlacePerc'] != 0.0)]
+# 움직이지않고도 winplaceperc가 높은 경우.
 
 
-# In[33]:
+# In[96]:
 
 
-df[(df['walkDistance'] == 0.0) & (df['winPlacePerc'] != 0.0)]
+all_zero = df_d[(df_d['walkDistance'] == 0.0) & (df_d['rideDistance'] == 0.0) & (df_d['swimDistance'] == 0.0)&(df_d['winPlacePerc']== 0.0)]
+all_zero
+# 거리와 승률이 0인 경우
+# 그냥 아무것도 안 한 경우.
+all_zero.describe()
+
+
+# In[103]:
+
+
+all_zero[all_zero['kills']==27]
+#?? 진짜 핵 같은데...
+
+
+# In[104]:
+
+
+all_zero[all_zero['heals']==31]
+# ???
+
+
+# In[88]:
+
+
+plt.figure(figsize=(10,10))
+sns.histplot(data= all_zero,bins=30)
+
+
+# In[105]:
+
+
+df_d[(df_d['damageDealt'] == 0.0)&(df_d['walkDistance'] == 0.0) & (df_d['rideDistance'] == 0.0) & (df_d['swimDistance'] == 0.0)&(df_d['winPlacePerc'] != 0.0)]
+# 거리와 딜량이 0이지만, 승률이 0이 아닌 경우
+# 움직이지도 않고 딜도 넣지 않았는데 승률이 존재 한다.?
+# 그럼... 아무것도 안 했는데 다른 사람들이 먼저 죽었기 때문에, 잠수였는데 운이 좋게 오래 살아남아서 winPlacePerc가 올라 간 것으로 보임.
+# 이정도 값은 날려도 됀다고 생각이 됌.
+
+
+# In[107]:
+
+
+lucky = df_d[(df_d['damageDealt'] == 0.0)&(df_d['walkDistance'] == 0.0) & (df_d['rideDistance'] == 0.0) & (df_d['swimDistance'] == 0.0)&(df_d['winPlacePerc'] != 0.0)]
+
+lucky.describe()
+
+
+# In[108]:
+
+
+lucky[lucky['killPlace']== 1]
+
+
+# In[106]:
+
+
+plt.figure(figsize=(10,10))
+sns.histplot(data= lucky,bins=30)
+
+
+# - solo / heal,boosts,weaponacquired의 개수가 5이상인 경우 삭제해보는 방향으로 
+
+# # Model Machince Learning
+
+# In[ ]:
+
+
+
 
