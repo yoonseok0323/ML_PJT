@@ -21,6 +21,13 @@
 #         LightGBM  
 #         Neural Network**  
 #         
+#         
+# - **DAY5 : 6/13(월), VSC 작업환경 setting & Preprocessing part functionalize & Git**
+#     -  **Linear Regression**  
+#     -  **Polynomial Regression**  
+# 
+# 
+# 
 #  
 # - **selected feature**
 #     - **walkDistance, killPlace, boosts, weaponAcquired
@@ -33,7 +40,7 @@
 # - **데이터 스케일링**  
 # 
 
-# In[49]:
+# In[28]:
 
 
 import numpy as np
@@ -49,49 +56,48 @@ import matplotlib.dates as mdates
 pd.set_option('display.max_columns',None)
 
 
-# In[58]:
+# In[29]:
 
 
-#df = pd.read_csv("/Users/krc/Downloads/pubg-finish-placement-prediction/train_V2.csv")
+df = pd.read_csv("/Users/krc/Downloads/pubg-finish-placement-prediction/train_V2.csv")
 
 
-df = pd.read_csv("/Users/krc/Desktop/modeling_pjt/pjt_df1.csv",index_col=0)
+# df = pd.read_csv("/Users/krc/Downloads/train_mini_pjt.csv",index_col=0)
 #mac
 
 # df = pd.read_csv("D:/download/pubg-finish-placement-prediction/train_V2.csv")
 #window
 
 
-# In[37]:
+# In[30]:
 
 
 # df[df['winPlacePerc'].isna()]
-# #2744604 탈주닌자로 예상 drop
 
 
-# In[5]:
+# In[31]:
 
 
-# # df.drop(index=2744604, axis=0, inplace = True)
-# df.drop(columns='Id',inplace = True)
-# df.drop(columns = 'groupId', inplace = True)
-# df.drop(columns= 'matchId',inplace = True)
-# df
-
-
-# In[51]:
-
-
+df.drop(index=2744604, axis=0, inplace = True)
+df.drop(columns='Id',inplace = True)
+df.drop(columns = 'groupId', inplace = True)
+df.drop(columns= 'matchId',inplace = True)
 df
 
 
-# In[7]:
+# In[32]:
+
+
+df.info()
+
+
+# In[33]:
 
 
 df.corr()
 
 
-# In[8]:
+# In[34]:
 
 
 df.corr()**2 
@@ -107,25 +113,25 @@ df.corr()**2
 
 # ### MatchType
 
-# In[7]:
+# In[35]:
 
 
 df['matchType'].unique()
 
 
-# In[34]:
+# In[36]:
 
 
 df['matchType'].value_counts()
 
 
-# In[8]:
+# In[37]:
 
 
 df.groupby('matchType').mean().sort_values(by='winPlacePerc',ascending=False)
 
 
-# In[9]:
+# In[38]:
 
 
 df['matchType'].value_counts()
@@ -134,7 +140,7 @@ df['matchType'].value_counts()
 
 # # Kill
 
-# In[10]:
+# In[39]:
 
 
 kill = df[['kills','teamKills','roadKills','longestKill','killPlace','weaponsAcquired','killStreaks','headshotKills','DBNOs','damageDealt','winPlacePerc']]
@@ -142,13 +148,13 @@ kill = df[['kills','teamKills','roadKills','longestKill','killPlace','weaponsAcq
 kill.describe()
 
 
-# In[11]:
+# In[40]:
 
 
 kill
 
 
-# In[12]:
+# In[41]:
 
 
 plt.figure(figsize=(15,15))
@@ -158,7 +164,7 @@ sns.heatmap(kill.corr(), linewidths = 1.0, vmax = 1.0,
 
 # ## kill 결정계수
 
-# In[13]:
+# In[42]:
 
 
 kill.corr()**2
@@ -166,7 +172,7 @@ kill.corr()**2
 
 # ## DamgeDealt ( v )
 
-# In[14]:
+# In[43]:
 
 
 plt.figure(figsize=(10,10))
@@ -176,7 +182,7 @@ sns.histplot(y= kill['damageDealt'], x= kill['winPlacePerc'],data=kill)
 
 # ## longestKill ( v )
 
-# In[15]:
+# In[44]:
 
 
 plt.figure(figsize=(10,10))
@@ -186,7 +192,7 @@ sns.histplot(y= kill['longestKill'], x= kill['winPlacePerc'],data=kill)
 
 # ## kills ( v )
 
-# In[16]:
+# In[45]:
 
 
 plt.figure(figsize=(15,8))
@@ -194,7 +200,15 @@ sns.boxplot(x="kills", y="winPlacePerc", data=kill)
 plt.show()
 
 
-# In[17]:
+# In[81]:
+
+
+plt.figure(figsize=(10,10))
+sns.set_palette('pastel')
+sns.histplot(y= kill['kills'], x= kill['winPlacePerc'],data=kill)
+
+
+# In[46]:
 
 
 kill['kills'].value_counts()
@@ -204,7 +218,7 @@ kill['kills'].value_counts()
 # 
 # - 중앙값은 많은 반면 편차가 큰 편이기도 함
 
-# In[18]:
+# In[47]:
 
 
 plt.figure(figsize=(15,8))
@@ -212,13 +226,13 @@ sns.boxplot(x="killStreaks", y="winPlacePerc", data=kill)
 plt.show()
 
 
-# In[19]:
+# In[48]:
 
 
 kill['killStreaks'].value_counts()
 
 
-# In[20]:
+# In[49]:
 
 
 plt.figure(figsize=(10,10))
@@ -226,7 +240,7 @@ sns.set_palette('pastel')
 sns.scatterplot(x= kill['killStreaks'], y= kill['winPlacePerc'],data=kill)
 
 
-# In[21]:
+# In[50]:
 
 
 sns.lineplot(x='killStreaks',y='winPlacePerc',data=kill)
@@ -234,7 +248,7 @@ sns.lineplot(x='killStreaks',y='winPlacePerc',data=kill)
 
 # ## weaponAcquired ( v )
 
-# In[22]:
+# In[51]:
 
 
 plt.figure(figsize=(30,15))
@@ -242,13 +256,13 @@ sns.boxplot(x="weaponsAcquired", y="winPlacePerc", data=kill)
 plt.show()
 
 
-# In[23]:
+# In[52]:
 
 
 kill['weaponsAcquired'].mean()
 
 
-# In[24]:
+# In[53]:
 
 
 wea = kill['weaponsAcquired'].unique()
@@ -256,7 +270,7 @@ wea
 #236
 
 
-# In[25]:
+# In[54]:
 
 
 wea1=kill['weaponsAcquired'].value_counts()
@@ -268,7 +282,7 @@ wea1.head(30)
 # - 해당 feature도 우상향하는 것을 보이지만, winPlaceperc를 예측하기에는 아웃라이어 값들이 많이 존재하기에 
 #   논의가 필요해보임
 
-# In[26]:
+# In[55]:
 
 
 plt.figure(figsize=(20,10))
@@ -276,14 +290,14 @@ sns.boxplot(x="headshotKills", y="winPlacePerc", data=kill)
 plt.show()
 
 
-# In[27]:
+# In[56]:
 
 
 plt.figure(figsize=(10,10))
 sns.histplot(x= kill['headshotKills'], y= kill['winPlacePerc'],data=kill)
 
 
-# In[28]:
+# In[57]:
 
 
 plt.figure(figsize=(10,10))
@@ -292,7 +306,7 @@ sns.lineplot(x='headshotKills',y='winPlacePerc',data=kill)
 
 # ## DBNOs
 
-# In[29]:
+# In[58]:
 
 
 plt.figure(figsize=(15,8))
@@ -300,7 +314,7 @@ sns.boxplot(x="DBNOs", y="winPlacePerc", data=kill)
 plt.show()
 
 
-# In[30]:
+# In[59]:
 
 
 plt.figure(figsize=(10,10))
@@ -309,13 +323,13 @@ sns.lineplot(x='DBNOs',y='winPlacePerc',data=kill)
 #데이터 양의 편차가 존재하기 때문에 뒷 부분 데이터 값을 어떻게 처리하면 좋을지.?
 
 
-# In[31]:
+# In[60]:
 
 
 kill['DBNOs'].value_counts()
 
 
-# In[32]:
+# In[61]:
 
 
 plt.figure(figsize=(15,8))
@@ -325,7 +339,7 @@ plt.show()
 
 # # Heal
 
-# In[33]:
+# In[62]:
 
 
 heal=df[['boosts','heals','revives','matchDuration','winPlacePerc']]
@@ -333,7 +347,7 @@ heal=df[['boosts','heals','revives','matchDuration','winPlacePerc']]
 heal.mean()
 
 
-# In[34]:
+# In[63]:
 
 
 plt.figure(figsize=(10,10))
@@ -343,7 +357,7 @@ sns.heatmap(heal.corr(), linewidths = 1.0, vmax = 1.0,
 
 # ## boosts ( v )
 
-# In[35]:
+# In[64]:
 
 
 plt.figure(figsize=(15,8))
@@ -352,27 +366,35 @@ plt.show()
 # 부스트 아이템 사용 시 평균적으로 winplaceperc가 높아진다.
 
 
-# In[36]:
+# In[65]:
 
 
 heal['boosts'].value_counts()
 
 
-# In[37]:
+# In[66]:
 
 
 heal[heal['boosts']==24]
 
 
-# In[38]:
+# In[67]:
 
 
 heal['boosts'].mean()
 
 
+# In[68]:
+
+
+plt.figure(figsize=(15,8))
+sns.jointplot(x= heal['boosts'],y=heal['winPlacePerc'],kind='scatter',data = heal)
+plt.show()
+
+
 # ## heals ( v )
 
-# In[39]:
+# In[69]:
 
 
 plt.figure(figsize=(15,8))
@@ -381,28 +403,36 @@ plt.show()
 #heals 힐링 아이템 사용 시 평균적으로 winplaceperc가 높아진다.
 
 
-# In[40]:
+# In[70]:
 
 
 heal['heals'].mean()
 
 
-# In[41]:
+# In[71]:
 
 
 heal['heals'].value_counts()
 
 
-# In[42]:
+# In[72]:
 
 
 hea= heal['heals'].value_counts()
 hea.head(30)
 
 
+# In[73]:
+
+
+plt.figure(figsize=(15,8))
+sns.jointplot(x= heal['heals'],y=heal['winPlacePerc'],kind='scatter',data = heal)
+plt.show()
+
+
 # ## revives 애매
 
-# In[43]:
+# In[74]:
 
 
 plt.figure(figsize=(15,8))
@@ -411,7 +441,7 @@ plt.show()
 # 팀플일 경우 부활 -> 3~4번을 넘어가면 장기전으로 이어지므로 의미가 없는 것으로 보인다.
 
 
-# In[44]:
+# In[75]:
 
 
 plt.figure(figsize=(15,8))
@@ -419,13 +449,13 @@ sns.boxplot(x='revives', y="winPlacePerc", data=heal)
 plt.show()
 
 
-# In[45]:
+# In[76]:
 
 
 heal['revives'].value_counts()
 
 
-# In[46]:
+# In[77]:
 
 
 plt.figure(figsize=(15,8))
@@ -435,13 +465,13 @@ plt.show()
 
 # # Dist
 
-# In[54]:
+# In[78]:
 
 
 df
 
 
-# In[69]:
+# In[79]:
 
 
 df_d = df[['matchType','assists','killPlace','kills', 'boosts' ,'damageDealt', 'heals',  'killStreaks', 'longestKill','rideDistance', 'swimDistance','walkDistance','winPlacePerc']]
@@ -449,7 +479,7 @@ df_d = df[['matchType','assists','killPlace','kills', 'boosts' ,'damageDealt', '
 
 
 
-# In[70]:
+# In[80]:
 
 
 df_d
@@ -963,7 +993,563 @@ sns.histplot(data= lucky,bins=30)
 
 # - solo / heal,boosts,weaponacquired의 개수가 5이상인 경우 삭제해보는 방향으로 
 
+# # Points & MatchType merge
+# - kill,rank,winpoints 결측치 채우기
+
+# In[145]:
+
+
+match_type = pd.read_csv("/Users/krc/Desktop/modeling_pjt/pjt_df1.csv",index_col=0)
+
+
+# In[6]:
+
+
+kwrPoints = ["killPoints","winPoints","rankPoints"]
+df
+
+
+# In[7]:
+
+
+df_2 = df_1.copy()
+
+
+# In[8]:
+
+
+df_2 = df_1.copy()
+df_2[df_2.rankPoints != -1].groupby('match_types').rankPoints.describe()
+
+
+# In[9]:
+
+
+df_3 = df_2.copy()
+types = list(df_3.match_types.unique())
+for col in kwrPoints:
+    if col != "rankPoints":
+        cond0 = df_2[col] == 0
+        cond1 = df_2[col] != 0
+    else:
+        cond0 = df_2[col] == -1
+        cond1 = df_2[col] != -1
+    for m_type in types:
+        cond2= df_3.match_types == m_type
+        mean = df_3[cond1 & cond2][col].mean()
+        std = df_3[cond1 & cond2][col].std()
+        size = df_3[cond0 & cond2][col].count()
+        if m_type != 'others' or col == "rankPoints":
+            rand_points = np.random.randint(mean-std, mean+std, size=size)
+        else:
+            rand_points = np.array([mean]*size)
+        print(col, m_type,rand_points)
+        df_3[col].loc[cond0&cond2] = rand_points
+df_3
+
+
+# In[10]:
+
+
+for col in kwrPoints:
+    plt.figure(figsize=(16,9))
+    sns.histplot(data=df_3,x=col,bins=300)
+    plt.show()
+    plt.close()
+
+
+# In[ ]:
+
+
+
+
+
+# In[51]:
+
+
+prepro_df = pd.read_csv("/Users/krc/Downloads/train_mini_pjt.csv")
+
+def Base_feature(feature):
+    df_b = feature[['walkDistance', 'killPlace', 'boosts', 'weaponsAcquired','damageDealt', 'heals', 'kills', 'killStreaks', 'longestKill',
+                  'headshotKills', 'rideDistance','assists','DBNOs','killPoints','matchType','rankPoints','winPoints']]
+    return df_b
+
+prepro_df
+
+
+# In[52]:
+
+
+Base_feature(prepro_df)
+
+
+# In[ ]:
+
+
+
+
+
+# ## test.csv
+
+# In[56]:
+
+
+import pandas as pd
+
+
+# In[59]:
+
+
+test_d = pd.read_csv("/Users/krc/Downloads/pubg-finish-placement-prediction/test_V2.csv")
+test_d
+Base_feature(test_d)
+
+
 # # Model Machince Learning
+
+# - solo / heal,boosts,weaponacquired의 개수가 5이상인 경우 삭제해보는 방향으로 
+
+# In[ ]:
+
+
+df_walk_out = df_d[(df_d['walkDistance'] == 0.0) & (df_d['winPlacePerc'] != 0.0)]
+df_train= df_train.drop(df_walk_out)
+
+
+# ## Linear Regression
+
+# In[21]:
+
+
+import numpy as np
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import openpyxl
+import os
+import matplotlib.dates as mdates
+
+pd.set_option('display.max_columns',None)
+
+
+# In[24]:
+
+
+
+df_train = pd.read_csv("/Users/krc/Downloads/pubg-finish-placement-prediction/train_V2.csv")
+df_walk_out = df_train[(df_train['walkDistance'] == 0.0) & (df_train['winPlacePerc'] != 0.0)]
+df_walk_out['walkDistance'] == 0.0
+#df_train= df_train.drop(df_walk_out)
+
+
+# In[ ]:
+
+
+from sklearn.metrics import mean_absolute_error
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+
+def preprocess(df):
+    df = __delete_nan_data(df)
+    new_col_name = "match_types"
+    df[new_col_name] = __convert_match_type_column(df,"matchType")
+    df = __change_nan_points(df)
+    df = __one_hot_encode_data_frame(df, new_col_name)
+    df = __select_features(df)
+    return df
+
+  
+def __delete_nan_data(df):
+    return df.dropna()
+
+  
+def __convert_match_type_column(prepro_df,encoding_feature):
+    encoded = prepro_df[encoding_feature].agg(preprocessing_match_type)
+    return encoded
+
+  
+def preprocessing_match_type(match_type):
+    standard_matches = ["solo", "duo", "squad", "solo-fpp", "duo-fpp", "squad-fpp"]
+    if match_type in standard_matches:
+        return match_type
+    else:
+        return "others" 
+
+      
+def __change_nan_points(df):
+    kill_rank_win_points = ["killPoints", "rankPoints", "winPoints"]
+    match_types_list = list(df.match_types.unique())
+    for col in kill_rank_win_points:
+        if col != "rankPoints":
+            cond0 = df[col] == 0
+            cond1 = df[col] != 0
+        else:
+            cond0 = df[col] == -1
+            cond1 = df[col] != -1
+        for m_type in match_types_list:
+            cond2 = df.match_types == m_type
+            mean = df[cond1 & cond2][col].mean()
+            std = df[cond1 & cond2][col].std()
+            size = df[cond0 & cond2][col].count()
+            if m_type != 'others' or col == "rankPoints":
+                rand_points = np.random.randint(mean-std, mean+std, size=size)
+            else:
+                rand_points = np.array([mean]*size)
+            df[col].loc[cond0 & cond2] = rand_points
+    return df
+
+  
+def __one_hot_encode_data_frame(df, encoding_feature):
+    df = pd.get_dummies(df, columns=[encoding_feature])
+    return df
+
+
+def __select_features(df):
+    main_columns = ["winPlacePerc",'heals','DBNOs',"walkDistance",'rideDistance', "boosts", "weaponsAcquired"]
+    kill_columns = ["kills", "damageDealt",'assists','killPlace','headshotKills','killStreaks','longestKill']
+    point_columns = ['killPoints','rankPoints','winPoints']
+    match_type_columns = df.columns[df.columns.str.contains("match_types")]
+    deleted_columns = list(set(df.columns)-set(main_columns)-set(kill_columns)-set(point_columns)-set(match_type_columns))
+        
+#     all_columns = ['assists', 'boosts', 'damageDealt', 'DBNOs',
+#        'headshotKills', 'heals', 'killPlace', 'killPoints', 'kills',
+#        'killStreaks', 'longestKill', 'matchDuration', 'maxPlace',
+#        'numGroups', 'rankPoints', 'revives', 'rideDistance', 'roadKills',
+#        'swimDistance', 'teamKills', 'vehicleDestroys', 'walkDistance',
+#        'weaponsAcquired', 'winPoints', 'winPlacePerc']    
+    #deleted_columns = list(set(df.columns)-set(all_columns)-set(match_type_columns))
+    return df.drop(columns=deleted_columns)
+
+
+def linear_reg(df):
+    X_train, X_val, y_train, y_val = model_train_data(df)
+    reg = LinearRegression().fit(X_train, y_train)
+    model_pred_eval_test_data(reg,X_val,y_val)
+#     return reg
+    
+
+def model_train_data(df):
+    X = df.drop(columns='winPlacePerc')
+    y = df.winPlacePerc
+    return train_test_split(X, y, test_size=0.2, random_state=0xC0FFEE)
+
+def model_pred_eval_train_data(model,X,y):
+    pred_train = model.predict(X)
+    print("train:",mean_absolute_error(y_train, pred_train))
+
+
+def model_pred_eval_test_data(model,X_val,y_val):
+    pred_val = model.predict(X_val)
+    print("linear_reg:",mean_absolute_error(y_val, pred_val))
+################################################################
+
+def poly_reg(df):
+    poly = LinearRegression()
+    X_train, X_val, y_train, y_val = model_train_data(df)
+
+    
+    poly_features = PolynomialFeatures(degree=2, include_bias=False) 
+    train_x_poly = poly_features.fit_transform(X_train)
+    np.c_[df.values[0], df.values[0]**2], train_x_poly[0]
+    
+    
+    
+    #fit
+    poly_model= poly.fit(train_x_poly, y_train)
+    val_x_poly = poly_features.fit_transform(X_val)
+    
+    #pred
+    pred_y = poly_m.predict(val_x_poly)
+
+    #eval
+    mae_train_p = mean_absolute_error(y_val, pred_y)
+    print(mae_train_p)
+
+    
+    
+
+print(df_train)
+print(df_train.columns)
+df_train = preprocess(df_train)
+print(df_train)
+print(df_train.columns)
+
+linear_reg(df_train)
+# poly_reg(df_train)
+
+# print(linear_reg(df_train))
+# print(poly_reg(df_train))
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# ## train_test
+
+# In[23]:
+
+
+from sklearn.model_selection import train_test_split
+
+
+# In[24]:
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0xC0FFEE)
+
+X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.25, random_state=0xC0FFEE)
+
+
+# In[25]:
+
+
+X = df
+y = df['winPlacePerc']
+
+
+# In[26]:
+
+
+# df = pd.get_dummies(df, columns=['match_types'])
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0xC0FFEE)
+X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.25, random_state=0xC0FFEE)
+
+
+# In[27]:
+
+
+from sklearn.metrics import mean_absolute_error
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+import numpy as np
+import pandas as pd
+
+def linear_reg(df):
+    X_train, X_val, y_train, y_val = model_train_data(df)
+    reg = LinearRegression().fit(X_train, y_train)
+    model_pred_eval_test_data(reg,X_val,y_val)
+#     return reg
+    
+
+def model_train_data(df):
+    X = df.drop(columns='winPlacePerc')
+    y = df.winPlacePerc
+    return train_test_split(X, y, test_size=0.2, random_state=0xC0FFEE)
+
+def model_pred_eval_train_data(model,X,y):
+    pred_train = model.predict(X)
+    print(mean_absolute_error(y_train, pred_train))
+
+
+def model_pred_eval_test_data(model,X_val,y_val):
+    pred_val = model.predict(X_val)
+    print(mean_absolute_error(y_val, pred_val))
+linear_reg(df)
+
+# killplace -> 0.09
+# killplace x -> 0.12
+
+# 0.10
+# 0.001
+
+
+# In[ ]:
+
+
+def poly_reg(df):
+    poly = LinearRegression()
+    X_train, X_val, y_train, y_val = model_train_data(df)
+
+    
+    poly_features = PolynomialFeatures(degree=2, include_bias=False) 
+    train_x_poly = poly_features.fit_transform(X_train)
+    np.c_[df.values[0], df.values[0]**2], train_x_poly[0]
+    
+    
+    
+    #fit
+    poly_model= poly.fit(train_x_poly, y_train)
+    val_x_poly = poly_features.fit_transform(X_val)
+    
+    #pred
+    pred_y = poly_m.predict(val_x_poly)
+
+    #eval
+    mae_train_p = mean_absolute_error(y_val, pred_y)
+    print(mae_train_p)
+#     poly = LinearRegression().fit(train__x_poly,y_train)
+
+
+# In[ ]:
+
+
+poly_reg(df_train)
+
+
+# In[45]:
+
+
+# train_data = df[['walkDistance', 'boosts', 'weaponsAcquired','headshotKills','DBNOs','assists',
+#       'damageDealt', 'heals', 'kills', 'killStreaks', 'longestKill', 'rideDistance']]
+
+# train_data_17 = df[['walkDistance', 'boosts', 'weaponsAcquired',
+#   'damageDealt', 'heals', 'kills', 'killStreaks', 'longestKill', 'headshotKills', 'rideDistance','assists','DBNOs','killPoints','rankPoints','winPoints']]
+
+# X = train_data_17
+# # X = train_data
+
+# y= df_3['winPlacePerc']
+
+
+# ## feature scaling
+
+# In[105]:
+
+
+# from sklearn.preprocessing import StandardScaler
+
+# scaler = StandardScaler()
+# X_train = scaler.fit_transform(X_train)
+# X_val = scaler.transform(X_val)
+# X_test = scaler.transform(X_test)
+
+
+# ## Learing Result
+
+# In[106]:
+
+
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
+
+
+# In[27]:
+
+
+#train_data_15 -> killplace,matchtype except
+
+# linear
+reg = LinearRegression()
+
+# poly
+poly = LinearRegression()
+poly_features = PolynomialFeatures(degree=2, include_bias=False) # 거듭제곱
+train_x_poly = poly_features.fit_transform(X_train)
+np.c_[X.values[0], X.values[0]**2], train_x_poly[0] 
+#두 배열을 가로 방향(왼쪽에서 오른쪽으로)으로 합치기 - numpy.c_[]
+
+# fit
+reg.fit(X_train, y_train)
+
+poly_m= poly.fit(train_x_poly, y_train)
+test_x_poly = poly_features.fit_transform(X_train)
+
+# pred
+pred_train = reg.predict(X_train)
+pred_val = reg.predict(X_val)
+pred_y = poly_m.predict(test_x_poly)
+
+
+# evaluate
+mse_train = mean_squared_error(y_train, pred_train)
+mse_val = mean_squared_error(y_val, pred_val)
+
+mse_train_p = mean_squared_error(y_train, pred_y)
+
+mae_train = mean_absolute_error(y_train, pred_train)
+mae_val = mean_absolute_error(y_val, pred_val)
+
+mae_train_p = mean_absolute_error(y_train, pred_y)
+
+
+print("1. Linear Regression_MSE\t, train=%.4f, val=%.4f" % (mse_train, mse_val))
+print("2. Linear Regression_MAE\t, train=%.4f, val=%.4f" % (mae_train, mae_val))
+print("3. polynomial Regression_MSE\t, train=%.4f" % (mse_train_p))
+print("4. polynomial Regression_MAE\t, train=%.4f" % (mae_train_p))
+
+
+# In[108]:
+
+
+# train_data_16 -> matchtype except
+
+# reg = LinearRegression()
+# reg.fit(X_train, y_train)
+
+# pred_train = reg.predict(X_train)
+# pred_val = reg.predict(X_val)
+
+# mse_train = mean_squared_error(y_train, pred_train)
+# mse_val = mean_squared_error(y_val, pred_val)
+
+# mae_train = mean_absolute_error(y_train, pred_train)
+# mae_val = mean_absolute_error(y_val, pred_val)
+
+# print("1. Linear Regression_MSE\t, train=%.4f, val=%.4f" % (mse_train, mse_val))
+# print("2. Linear Regression_MAE\t, train=%.4f, val=%.4f" % (mae_train, mae_val))
+
+
+# In[109]:
+
+
+# train_data
+
+
+# reg = LinearRegression()
+# reg.fit(X_train, y_train)
+
+# pred_train = reg.predict(X_train)
+# pred_val = reg.predict(X_val)
+
+# mse_train = mean_squared_error(y_train, pred_train)
+# mse_val = mean_squared_error(y_val, pred_val)
+
+# mae_train = mean_absolute_error(y_train, pred_train)
+# mae_val = mean_absolute_error(y_val, pred_val)
+
+# print("1. Linear Regression_MSE\t, train=%.4f, val=%.4f" % (mse_train, mse_val))
+# print("2. Linear Regression_MAE\t, train=%.4f, val=%.4f" % (mae_train, mae_val))
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
 
 # In[ ]:
 
