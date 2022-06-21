@@ -8,10 +8,10 @@
       정상 data로 판단하게 된 시행착오를 겪음**
 
 - **DAY4 : 6/10(금), 전처리 작업(walkDistance) & 회귀모델 사전조사**
-    -   Linear Regression ( CYS'part ) 
+    -   Linear Regression ( CYS'part )   
         Lasso  
         Ridge  
-        Polynomial Regression  ( CYS'part ) 
+        Polynomial Regression ( CYS'part )   
         RandomForest  
         XGBoost  
         LightGBM  
