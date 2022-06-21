@@ -40,17 +40,19 @@
   
 --- 
 ## DataProcessing_Columns
-
-- **selected feature**
-    - **'walkDistance', 'killPlace', 'boosts', 'weaponsAcquired','damageDealt', 'heals', 'kills', 'killStreaks', 'longestKill',
-                  'headshotKills', 'rideDistance','assists','DBNOs','killPoints','matchType','rankPoints','winPoints**
-  
-
 - **아웃라이어 제거?, 컬럼별 아웃라이어 제거, 제거 시, 데이터 수? 얼마나 데이터가 제거되는지**
 - **이상한 부분? Ex) 이동거리 0인데 승률이 높은 경우.**
 - ** 위의 2가지 내용은 해당 부분도 test_data에 실제 data일 경우의 수가 있기 때문에 이상치 처리하지 않음**
+
+- **이상치 데이터 정리**
+    -**Points(killPoints, rankPoints, winPoints) : 결측치 데이터 채우기**
+    -**categorical data(matchType) : encoding 적용**
+
+
 - **데이터 스케일링**
     - standardscaler , minmaxscaler
 
- 
+ - **selected feature**
+    - **'walkDistance', 'killPlace', 'boosts', 'weaponsAcquired','damageDealt', 'heals', 'kills', 'killStreaks', 'longestKill',
+                  'headshotKills', 'rideDistance','assists','DBNOs','killPoints','matchType','rankPoints','winPoints**
 
