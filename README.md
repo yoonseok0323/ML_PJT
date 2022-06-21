@@ -55,4 +55,22 @@
  - **selected feature**
     - **'walkDistance', 'killPlace', 'boosts', 'weaponsAcquired','damageDealt', 'heals', 'kills', 'killStreaks', 'longestKill',
                   'headshotKills', 'rideDistance','assists','DBNOs','killPoints','matchType','rankPoints','winPoints**
+---
 
+## Review & Insight
+- **EDA & Data_PreProcessing**
+    - **Numeric_data 시각화 시 boxplot보다 histplot으로 확인이 필요하다.**
+    - **상관계수, 결정계수, VIF를 통해 feature 분류**
+    - **해당 과정을 통해서 이상치라고 생각했던 data가 정상 data일 수 있겠다는 insight 획득, 전처리과정의 중요성!**
+
+- **VScode**
+    - **함수명의 직관성 & 간결성 / 코드 재사용의 중요성**
+    -
+- **Github**
+    - **Used branch & push to Team_organize_github**
+    - **pull request시 발생하는 conflict issue 발생 및 해결**
+
+- **Learning_Model**
+    - **scaler,hyperparameter-tunning 보다 feature의 drop,add 부분에서 예측 값의 변동 추이가 있었다.**
+
+---
