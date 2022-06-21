@@ -67,8 +67,8 @@
 ---
 ## Learn_Model
 
-- **Linear_regression
-- **Poly_regression
+- **Linear_regression**
+- **Poly_regression**
 
 
 ---
