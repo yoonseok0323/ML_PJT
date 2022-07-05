@@ -24,16 +24,16 @@
     -**VScode_processing.py / learn.py_ing & team_github**
     
 - **DAY7 :  6/15(수)**
-    -**VScode_processing.py_Done / learn.py_Done & team_github & 대면 feadback( All_feature 넣고 해보기 )**
+    -**VScode_processing.py_Done / learn.py_Done & team_github & 대면 feedback( All_feature 넣고 해보기 )**
     
 - **DAY8 :  6/16(목)**
-    -**VScode_processing.py_Done / learn.py_Done & team_github_Done(conflict 해결) & 대면 feadback( All_feature 넣고 해보기 )_Done**
+    -**VScode_processing.py_Done / learn.py_Done & team_github_Done(conflict 해결) & 대면 feedback( All_feature 넣고 해보기 )_Done**
 
 - **DAY9 :  6/17(금)**
-    -**VScode_processing.py_Done / learn.py_Done & team_github_Done & 대면 feadback( All_feature 넣고 해보기 )_Done & ppt작업**
+    -**VScode_processing.py_Done / learn.py_Done & team_github_Done & 대면 feedback( All_feature 넣고 해보기 )_Done & ppt작업**
 
 - **DAY10 :  6/290(월)**
-    -**VScode_processing.py_Done / learn.py_Done & team_github_Done & 대면 feadback( All_feature 넣고 해보기 )_Done & ppt작업_Done**
+    -**VScode_processing.py_Done / learn.py_Done & team_github_Done & 대면 feedback( All_feature 넣고 해보기 )_Done & ppt작업_Done**
 
 
 
